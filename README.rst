@@ -1,0 +1,20 @@
+Installation
+============
+
+We need a customized fork of tinydav, which fixes an issue in proppatch.
+
+>>> git clone git@github.com:ZeitOnline/tinydav.git ../tinydav
+>>> virtualenv .
+>>> ./bin/pip install -e ../tinydav
+>>> ./bin/pip install lxml
+
+We cannot install our custom tinydav like below, since somehow the
+``__init__.py`` is missing, which contains almost everything of tinydav.
+
+>>> ./bin/pip install tinydav -i http://devpi.zeit.de:4040/zeit/default --trusted-host devpi.zeit.de
+
+
+Usage
+=====
+
+>>> ./bin/python migrate_properties.py < example_uniqueids.txt
