@@ -1,5 +1,8 @@
+import UserDict
 import contextlib
 import lxml.etree
+import lxml.objectify
+import re
 import sys
 import tinydav
 import urlparse
@@ -84,8 +87,57 @@ class PropertyMigrationHelper(object):
     def properties(self, uniqueId):
         """Read properties, yield them for migration and write back to DAV."""
         props = self.client.propfind(self._path(uniqueId)).properties
-        yield props
+        xml = lxml.etree.fromstring(
+            self.client.get(self._path(uniqueId)).content)
+        yield Properties(props, xml)
+        self.client.put(
+            self._path(uniqueId),
+            lxml.etree.tostring(xml, encoding='utf-8', xml_declaration=True))
         self.client.proppatch(self._path(uniqueId), props)
+
+
+class Properties(UserDict.DictMixin):
+    """Helper class to transparently manipulate DAV properties *and* body."""
+
+    def __init__(self, dav_properties, body):
+        self.dav_properties = dav_properties
+        self.body = body
+
+    def __getitem__(self, namespaced_key):
+        """DAV properties are the "master" source, so we only look there."""
+        return self.dav_properties[namespaced_key]
+
+    def __setitem__(self, namespaced_key, value):
+        """Set new value in DAV properties and inside the XML body.
+
+        For DAV Properties `proppatch` takes care of creating new properties,
+        but inside the XML body we have to create new nodes manually.
+
+        """
+        self.dav_properties[namespaced_key] = value
+
+        namespace, key = re.match("\{(.+)\}(.+)", namespaced_key).groups()
+        prop = self.body.find(
+            ".//head/attribute[@ns='{}'][@name='{}']".format(namespace, key))
+        if prop is not None:
+            prop.text = value
+        else:
+            element = self._create_attribute(namespace, key, value)
+            self.body.find('.//head').append(element)
+
+    def _create_attribute(self, namespace, key, value):
+        """Create new <attribute> to save property inside XML body.
+
+        We try to keep the same order as the CMS, i.e. first `py:pytype`
+        annotation followed by `ns` and `name`.
+
+        """
+        element = lxml.etree.Element("attribute")
+        element.text = value
+        lxml.objectify.annotate(element)
+        element.set('ns', namespace)
+        element.set('name', key)
+        return element
 
 
 if __name__ == "__main__":
