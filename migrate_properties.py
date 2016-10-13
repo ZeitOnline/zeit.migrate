@@ -75,9 +75,12 @@ class PropertyMigrationHelper(object):
 
     """
 
-    def __init__(self):
-        url = urlparse.urlparse(DAV_URL)
-        self.client = WebDAVClient(url.hostname, url.port)
+    def __init__(self, client=None):
+        if client is None:
+            url = urlparse.urlparse(DAV_URL)
+            self.client = WebDAVClient(url.hostname, url.port)
+        else:
+            self.client = client
 
     def _path(self, uniqueId):
         """Calculate URI for propfind / proppatch."""

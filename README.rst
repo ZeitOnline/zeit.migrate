@@ -18,3 +18,10 @@ Usage
 =====
 
 >>> ./bin/python migrate_properties.py < example_uniqueids.txt
+
+
+Testing
+=======
+
+>>> ./bin/pip install pytest
+>>> ./bin/pytest test_migrate_properties.py
