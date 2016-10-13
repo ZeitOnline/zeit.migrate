@@ -3,7 +3,6 @@ import contextlib
 import lxml.etree
 import lxml.objectify
 import re
-import sys
 import tinydav
 import urlparse
 
@@ -141,11 +140,3 @@ class Properties(UserDict.DictMixin):
         element.set('ns', namespace)
         element.set('name', key)
         return element
-
-
-if __name__ == "__main__":
-    migration_helper = PropertyMigrationHelper()
-    for uniqueId in sys.stdin:
-        with migration_helper.properties(uniqueId.strip()) as props:
-            props['{http://namespaces.zeit.de/CMS/document}access'] = (
-                'registration')

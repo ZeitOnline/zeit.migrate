@@ -17,7 +17,13 @@ We cannot install our custom tinydav like below, since somehow the
 Usage
 =====
 
->>> ./bin/python migrate_properties.py < example_uniqueids.txt
+To restrict access to print articles to `registration` use::
+
+>>> ./bin/python migrate_print_articles_ZON_3383.py < example_uniqueids.txt
+
+To disable `is_amp` on articles whose `access` is not `free` use::
+
+>>> ./bin/python migrate_restricted_amp_articles_ZON_3323.py < example_uniqueids.txt
 
 
 Testing
