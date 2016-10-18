@@ -106,7 +106,13 @@ class Properties(UserDict.DictMixin):
         self.body = body
 
     def __getitem__(self, namespaced_key):
-        """DAV properties are the "master" source, so we only look there."""
+        """DAV properties are the "master" source, so we only look there.
+
+        We return ``None`` if a property does not exist, so migrations do not
+        have to handle ``KeyError``.
+        """
+        if namespaced_key not in self.dav_properties:
+            return None
         return self.dav_properties[namespaced_key]
 
     def __setitem__(self, namespaced_key, value):

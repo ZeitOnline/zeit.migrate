@@ -85,12 +85,13 @@ def test_creates_new_property_in_dav_and_body_if_missing(client):
     assert 'lorem' == client.properties_result[foobar_key]
     assert 'name="foobar">lorem</attribute>' in client.body_result
 
-
-def test_can_read_existing_property(client):
-    access_key = '{http://namespaces.zeit.de/CMS/document}access'
+@pytest.mark.parametrize(
+    ['prop' ,'result'], [('access', 'free'), ('foobar', None)])
+def test_can_read_existing_property(client, prop, result):
+    key = '{http://namespaces.zeit.de/CMS/document}%s' % prop
     helper = migrate_properties.PropertyMigrationHelper(client)
     with helper.properties('http://xml.zeit.de/foobar') as prop:
-        assert 'free' == prop[access_key]
+        assert result == prop[key]
 
 
 def test_WebDAVClient_propfind_returns_WebDAVPropfindResponse():
