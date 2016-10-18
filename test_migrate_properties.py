@@ -85,8 +85,9 @@ def test_creates_new_property_in_dav_and_body_if_missing(client):
     assert 'lorem' == client.properties_result[foobar_key]
     assert 'name="foobar">lorem</attribute>' in client.body_result
 
+
 @pytest.mark.parametrize(
-    ['prop' ,'result'], [('access', 'free'), ('foobar', None)])
+    ['prop', 'result'], [('access', 'free'), ('foobar', None)])
 def test_can_read_existing_property(client, prop, result):
     key = '{http://namespaces.zeit.de/CMS/document}%s' % prop
     helper = migrate_properties.PropertyMigrationHelper(client)
@@ -113,3 +114,11 @@ def test_WebDAVClient_propfind_retries_on_301_with_ending_slash():
 def test_PropertyMigrationHelper_automatically_creates_a_WebDAVClient():
     helper = migrate_properties.PropertyMigrationHelper()
     assert isinstance(helper.client, migrate_properties.WebDAVClient)
+
+
+def test_main_calls_properties_for_each_uniqueId():
+    with mock.patch(
+            'migrate_properties.PropertyMigrationHelper.properties') as props:
+        list(migrate_properties.main(
+            ['http://xml.zeit.de/foobar', 'http://xml.zeit.de/foobaz']))
+        assert 2 == props.call_count

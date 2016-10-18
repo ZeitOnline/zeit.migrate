@@ -2,12 +2,13 @@ import migrate_properties
 import sys
 
 
-if __name__ == "__main__":
+def migrate(props):
     """Disable `is_amp` on all articles, whose `access` is not `free`."""
-    namespace = 'http://namespaces.zeit.de/CMS/document'
-    migration_helper = migrate_properties.PropertyMigrationHelper()
-    for uniqueId in sys.stdin:
-        with migration_helper.properties(uniqueId.strip()) as props:
-            access = '{%s}access' % namespace
-            if access in props and props[access] != 'free':
-                props['{%s}is_amp' % namespace] = 'no'
+    access = '{%s}access' % migrate_properties.NAMESPACE
+    if props[access] not in ('free', None):
+        props['{%s}is_amp' % migrate_properties.NAMESPACE] = 'no'
+
+
+if __name__ == "__main__":
+    for props in migrate_properties.main(uniqueIds=sys.stdin):
+        migrate(props)

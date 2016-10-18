@@ -7,6 +7,7 @@ import tinydav
 import urlparse
 
 DAV_URL = 'http://cms-backend.staging.zeit.de:9000'
+NAMESPACE = 'http://namespaces.zeit.de/CMS/document'
 
 
 class WebDAVClient(tinydav.WebDAVClient):
@@ -146,3 +147,10 @@ class Properties(UserDict.DictMixin):
         element.set('ns', namespace)
         element.set('name', key)
         return element
+
+
+def main(uniqueIds):
+    migration_helper = PropertyMigrationHelper()
+    for uniqueId in uniqueIds:
+        with migration_helper.properties(uniqueId.strip()) as props:
+            yield props
