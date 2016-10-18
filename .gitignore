@@ -1,8 +1,10 @@
 *.pyc
-.Python
 .cache/
+.coverage
+.Python
 __pycache__/
 bin/
+htmlcov/
 include/
 lib/
 pip-selfcheck.json

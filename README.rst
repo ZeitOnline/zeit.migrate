@@ -29,6 +29,6 @@ To disable `is_amp` on articles whose `access` is not `free` use::
 Testing
 =======
 
->>> ./bin/pip install pytest
+>>> ./bin/pip install pytest pytest-cov
 >>> ./bin/pip install mock
 >>> ./bin/pytest test_migrate_properties.py
