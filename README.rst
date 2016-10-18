@@ -30,4 +30,5 @@ Testing
 =======
 
 >>> ./bin/pip install pytest
+>>> ./bin/pip install mock
 >>> ./bin/pytest test_migrate_properties.py
