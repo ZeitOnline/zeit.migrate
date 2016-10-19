@@ -16,7 +16,6 @@ class WebDAVClient(tinydav.WebDAVClient):
     The Response object supports conversion of the XML response to a dict of
     DAV properties. For simplicity this specialized client does not support
     other parameters aside URI.
-
     """
 
     def propfind(self, uri):
@@ -48,7 +47,6 @@ class WebDAVPropfindResponse(object):
         :Example:
 
            {'{http://namespaces.zeit.de/CMS/document}my_prop': 'my_val
-
         """
         # Select properties contained in XML response inside `{DAV:}prop` tag.
         all_props = next(dav_xml.iterfind('.//{DAV:}prop')).iterfind('*')
@@ -72,7 +70,6 @@ class PropertyMigrationHelper(object):
     helper = PropertyMigrationHelper()
     with helper.properties('http://xml.zeit.de/path/to/content') as props:
         props['{http://namespaces.zeit.de/CMS/document}access'] = 'free'
-
     """
 
     def __init__(self, client=None, url=None):
@@ -121,7 +118,6 @@ class Properties(UserDict.DictMixin):
 
         For DAV Properties `proppatch` takes care of creating new properties,
         but inside the XML body we have to create new nodes manually.
-
         """
         self.dav_properties[namespaced_key] = value
 
@@ -139,7 +135,6 @@ class Properties(UserDict.DictMixin):
 
         We try to keep the same order as the CMS, i.e. first `py:pytype`
         annotation followed by `ns` and `name`.
-
         """
         element = lxml.etree.Element("attribute")
         element.text = value
