@@ -46,7 +46,7 @@ class WebDAVPropfindResponse(object):
 
         :Example:
 
-           {'{http://namespaces.zeit.de/CMS/document}my_prop': 'my_val
+           {'{http://namespaces.zeit.de/CMS/document}my_prop': 'my_val'}
         """
         # Select properties contained in XML response inside `{DAV:}prop` tag.
         all_props = next(dav_xml.iterfind('.//{DAV:}prop')).iterfind('*')
