@@ -112,7 +112,8 @@ def test_WebDAVClient_propfind_retries_on_301_with_ending_slash():
 
 
 def test_PropertyMigrationHelper_automatically_creates_a_WebDAVClient():
-    helper = zeit.migrate.migrate.PropertyMigrationHelper()
+    helper = zeit.migrate.migrate.PropertyMigrationHelper(
+        url='http://example.com:80')
     assert isinstance(helper.client, zeit.migrate.migrate.WebDAVClient)
 
 

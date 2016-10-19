@@ -1,4 +1,5 @@
 import UserDict
+import argparse
 import contextlib
 import lxml.etree
 import lxml.objectify
@@ -6,7 +7,6 @@ import re
 import tinydav
 import urlparse
 
-DAV_URL = 'http://cms-backend.staging.zeit.de:9000'
 NAMESPACE = 'http://namespaces.zeit.de/CMS/document'
 
 
@@ -75,9 +75,9 @@ class PropertyMigrationHelper(object):
 
     """
 
-    def __init__(self, client=None):
+    def __init__(self, client=None, url=None):
         if client is None:
-            url = urlparse.urlparse(DAV_URL)
+            url = urlparse.urlparse(url)
             self.client = WebDAVClient(url.hostname, url.port)
         else:
             self.client = client
@@ -150,7 +150,15 @@ class Properties(UserDict.DictMixin):
 
 
 def main(uniqueIds):
-    migration_helper = PropertyMigrationHelper()
+    parser = argparse.ArgumentParser(description='Run DAV migrations')
+    parser.add_argument('--dav-url', help='DAV URL',
+                        default='http://cms-backend.staging.zeit.de:9000')
+    options = parser.parse_args()
+    if not options.dav_url:
+        parser.print_help()
+        raise SystemExit(1)
+
+    migration_helper = PropertyMigrationHelper(url=options.dav_url)
     for uniqueId in uniqueIds:
         with migration_helper.properties(uniqueId.strip()) as props:
             yield props

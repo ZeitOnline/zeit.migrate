@@ -23,6 +23,9 @@ To disable `is_amp` on articles whose `access` is not `free` use::
 
    $ bin/python migrate_restricted_amp_articles_ZON_3323.py < example_uniqueids.txt
 
+Set the DAV server URL to production with
+``--dav-url=http://cms-backend.zeit.de:9000``
+
 
 Running tests
 =============
