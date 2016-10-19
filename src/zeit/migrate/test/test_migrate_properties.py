@@ -119,7 +119,7 @@ def test_PropertyMigrationHelper_automatically_creates_a_WebDAVClient():
 
 def test_main_calls_properties_for_each_uniqueId():
     with mock.patch(
-            'zeit.migrate.migrate.PropertyMigrationHelper.properties') as props:
+            'zeit.migrate.migrate.PropertyMigrationHelper.properties') as prop:
         list(zeit.migrate.migrate.main(
             ['http://xml.zeit.de/foobar', 'http://xml.zeit.de/foobaz']))
-        assert 2 == props.call_count
+        assert 2 == prop.call_count
