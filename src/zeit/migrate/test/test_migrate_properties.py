@@ -1,5 +1,5 @@
 import collections
-import migrate_properties
+import zeit.migrate.migrate
 import mock
 import pytest
 
@@ -17,7 +17,7 @@ class FakeClient(object):
         self.body = body
 
     def propfind(self, url):
-        return migrate_properties.WebDAVPropfindResponse(
+        return zeit.migrate.migrate.WebDAVPropfindResponse(
             Response(self.properties))
 
     def proppatch(self, url, properties):
@@ -62,7 +62,7 @@ def client():
 
 
 def test_filters_non_cms_properties(client):
-    helper = migrate_properties.PropertyMigrationHelper(client)
+    helper = zeit.migrate.migrate.PropertyMigrationHelper(client)
     with helper.properties('http://xml.zeit.de/foobar'):
         pass
     assert all(['DAV' not in key for key in client.properties_result.keys()])
@@ -70,7 +70,7 @@ def test_filters_non_cms_properties(client):
 
 def test_changes_existing_property_in_dav_and_body(client):
     access_key = '{http://namespaces.zeit.de/CMS/document}access'
-    helper = migrate_properties.PropertyMigrationHelper(client)
+    helper = zeit.migrate.migrate.PropertyMigrationHelper(client)
     with helper.properties('http://xml.zeit.de/foobar') as prop:
         prop[access_key] = 'abo'
     assert 'abo' == client.properties_result[access_key]
@@ -79,7 +79,7 @@ def test_changes_existing_property_in_dav_and_body(client):
 
 def test_creates_new_property_in_dav_and_body_if_missing(client):
     foobar_key = '{http://namespaces.zeit.de/CMS/document}foobar'
-    helper = migrate_properties.PropertyMigrationHelper(client)
+    helper = zeit.migrate.migrate.PropertyMigrationHelper(client)
     with helper.properties('http://xml.zeit.de/foobar') as prop:
         prop[foobar_key] = 'lorem'
     assert 'lorem' == client.properties_result[foobar_key]
@@ -90,7 +90,7 @@ def test_creates_new_property_in_dav_and_body_if_missing(client):
     ['prop', 'result'], [('access', 'free'), ('foobar', None)])
 def test_can_read_existing_property(client, prop, result):
     key = '{http://namespaces.zeit.de/CMS/document}%s' % prop
-    helper = migrate_properties.PropertyMigrationHelper(client)
+    helper = zeit.migrate.migrate.PropertyMigrationHelper(client)
     with helper.properties('http://xml.zeit.de/foobar') as prop:
         assert result == prop[key]
 
@@ -98,27 +98,27 @@ def test_can_read_existing_property(client, prop, result):
 def test_WebDAVClient_propfind_returns_WebDAVPropfindResponse():
     with mock.patch('tinydav.WebDAVClient.propfind') as propfind:
         propfind.return_value = Response('<foo/>')
-        client = migrate_properties.WebDAVClient('example.com')
+        client = zeit.migrate.migrate.WebDAVClient('example.com')
         result = client.propfind('test.uri')
-    assert isinstance(result, migrate_properties.WebDAVPropfindResponse)
+    assert isinstance(result, zeit.migrate.migrate.WebDAVPropfindResponse)
 
 
 def test_WebDAVClient_propfind_retries_on_301_with_ending_slash():
     with mock.patch('tinydav.WebDAVClient.propfind') as propfind:
         propfind.side_effect = [301, Response('<foo/>')]
-        client = migrate_properties.WebDAVClient('example.com')
+        client = zeit.migrate.migrate.WebDAVClient('example.com')
         client.propfind('test.uri')
     assert 'test.uri/' == propfind.call_args[0][0]
 
 
 def test_PropertyMigrationHelper_automatically_creates_a_WebDAVClient():
-    helper = migrate_properties.PropertyMigrationHelper()
-    assert isinstance(helper.client, migrate_properties.WebDAVClient)
+    helper = zeit.migrate.migrate.PropertyMigrationHelper()
+    assert isinstance(helper.client, zeit.migrate.migrate.WebDAVClient)
 
 
 def test_main_calls_properties_for_each_uniqueId():
     with mock.patch(
-            'migrate_properties.PropertyMigrationHelper.properties') as props:
-        list(migrate_properties.main(
+            'zeit.migrate.migrate.PropertyMigrationHelper.properties') as props:
+        list(zeit.migrate.migrate.main(
             ['http://xml.zeit.de/foobar', 'http://xml.zeit.de/foobaz']))
         assert 2 == props.call_count

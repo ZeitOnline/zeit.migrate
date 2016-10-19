@@ -1,6 +1,6 @@
 import lxml.etree
 import migrate_print_articles_ZON_3383 as migrate
-import migrate_properties
+import zeit.migrate.migrate
 
 BODY_TEMPLATE = """\
 <?xml version="1.0" encoding="utf-8"?>
@@ -12,14 +12,14 @@ BODY_TEMPLATE = """\
 </article>
 """
 
-ACCESS_KEY = '{%s}access' % migrate_properties.NAMESPACE
+ACCESS_KEY = '{%s}access' % zeit.migrate.migrate.NAMESPACE
 
 
 def test_migration_sets_access_to_registration():
     body = BODY_TEMPLATE.format(attributes="""\
 <attribute py:pytype="str" ns="{namespace}" name="access">free</attribute>
-""".format(namespace=migrate_properties.NAMESPACE))
-    props = migrate_properties.Properties(
+""".format(namespace=zeit.migrate.migrate.NAMESPACE))
+    props = zeit.migrate.migrate.Properties(
         {ACCESS_KEY: 'free'},
         lxml.etree.fromstring(body))
 

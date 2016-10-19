@@ -1,6 +1,6 @@
 import lxml.etree
 import migrate_restricted_amp_articles_ZON_3323 as migrate
-import migrate_properties
+import zeit.migrate.migrate
 
 BODY_TEMPLATE = """\
 <?xml version="1.0" encoding="utf-8"?>
@@ -12,16 +12,16 @@ BODY_TEMPLATE = """\
 </article>
 """
 
-ACCESS_KEY = '{%s}access' % migrate_properties.NAMESPACE
-IS_AMP_KEY = '{%s}is_amp' % migrate_properties.NAMESPACE
+ACCESS_KEY = '{%s}access' % zeit.migrate.migrate.NAMESPACE
+IS_AMP_KEY = '{%s}is_amp' % zeit.migrate.migrate.NAMESPACE
 
 
 def test_migration_restricts_amp_for_restricted_articles():
     body = BODY_TEMPLATE.format(attributes="""\
 <attribute py:pytype="str" ns="{namespace}" name="access">abo</attribute>
 <attribute py:pytype="str" ns="{namespace}" name="is_amp">yes</attribute>
-""".format(namespace=migrate_properties.NAMESPACE))
-    props = migrate_properties.Properties(
+""".format(namespace=zeit.migrate.migrate.NAMESPACE))
+    props = zeit.migrate.migrate.Properties(
         {ACCESS_KEY: 'abo', IS_AMP_KEY: 'yes'},
         lxml.etree.fromstring(body))
 
@@ -34,8 +34,8 @@ def test_migration_does_not_change_is_amp_if_access_is_free():
     body = BODY_TEMPLATE.format(attributes="""\
 <attribute py:pytype="str" ns="{namespace}" name="access">free</attribute>
 <attribute py:pytype="str" ns="{namespace}" name="is_amp">yes</attribute>
-""".format(namespace=migrate_properties.NAMESPACE))
-    props = migrate_properties.Properties(
+""".format(namespace=zeit.migrate.migrate.NAMESPACE))
+    props = zeit.migrate.migrate.Properties(
         {ACCESS_KEY: 'free', IS_AMP_KEY: 'yes'},
         lxml.etree.fromstring(body))
 
@@ -47,8 +47,8 @@ def test_migration_does_not_change_is_amp_if_access_is_free():
 def test_migration_treats_missing_access_as_free():
     body = BODY_TEMPLATE.format(attributes="""\
 <attribute py:pytype="str" ns="{namespace}" name="is_amp">yes</attribute>
-""".format(namespace=migrate_properties.NAMESPACE))
-    props = migrate_properties.Properties(
+""".format(namespace=zeit.migrate.migrate.NAMESPACE))
+    props = zeit.migrate.migrate.Properties(
         {IS_AMP_KEY: 'yes'},
         lxml.etree.fromstring(body))
 
