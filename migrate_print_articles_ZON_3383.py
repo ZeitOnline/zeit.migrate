@@ -4,7 +4,7 @@ import sys
 
 def migrate(props):
     """Restrict access to all print articles to `registration`."""
-    props['{%s}access' % zm.NAMESPACE] = 'registration'
+    props['{%s}access' % zm.NS_DOCUMENT] = 'registration'
 
 
 if __name__ == "__main__":

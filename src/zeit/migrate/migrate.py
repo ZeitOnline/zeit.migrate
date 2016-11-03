@@ -7,7 +7,7 @@ import re
 import tinydav
 import urlparse
 
-NAMESPACE = 'http://namespaces.zeit.de/CMS/document'
+NS_DOCUMENT = 'http://namespaces.zeit.de/CMS/document'
 
 
 class WebDAVClient(tinydav.WebDAVClient):

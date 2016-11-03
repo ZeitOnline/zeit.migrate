@@ -12,13 +12,13 @@ BODY_TEMPLATE = """\
 </article>
 """
 
-ACCESS_KEY = '{%s}access' % zeit.migrate.migrate.NAMESPACE
+ACCESS_KEY = '{%s}access' % zeit.migrate.migrate.NS_DOCUMENT
 
 
 def test_migration_sets_access_to_registration():
     body = BODY_TEMPLATE.format(attributes="""\
 <attribute py:pytype="str" ns="{namespace}" name="access">free</attribute>
-""".format(namespace=zeit.migrate.migrate.NAMESPACE))
+""".format(namespace=zeit.migrate.migrate.NS_DOCUMENT))
     props = zeit.migrate.migrate.Properties(
         {ACCESS_KEY: 'free'},
         lxml.etree.fromstring(body))
