@@ -1,5 +1,12 @@
+*.pyc
+.cache/
+.coverage
 .Python
+.tox/
+__pycache__/
 bin/
+htmlcov/
 include/
+local/
 lib/
 pip-selfcheck.json
