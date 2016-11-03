@@ -138,6 +138,8 @@ class Properties(UserDict.DictMixin):
         """
         element = lxml.etree.Element("attribute")
         element.text = value
+        # XXX vivi _should_ remove these annotations on checkin but doesn't at
+        # the moment, so we add them in order to look as "normal" as possible.
         lxml.objectify.annotate(element)
         element.set('ns', namespace)
         element.set('name', key)
