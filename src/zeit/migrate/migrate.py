@@ -5,6 +5,7 @@ import lxml.etree
 import lxml.objectify
 import re
 import tinydav
+import tinydav.exception
 import urlparse
 
 NS_DOCUMENT = 'http://namespaces.zeit.de/CMS/document'
@@ -21,8 +22,9 @@ class WebDAVClient(tinydav.WebDAVClient):
     def propfind(self, uri):
         try:
             resp = super(WebDAVClient, self).propfind(uri)
-        except tinydav.exceptions.HTTPError, e:
+        except tinydav.exception.HTTPError, e:
             e.response.statusline = u'%s %s' % (uri, e.response.statusline)
+            raise e
         if resp == 301:
             resp = super(WebDAVClient, self).propfind(uri + '/')
         return WebDAVPropfindResponse(resp)

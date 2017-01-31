@@ -20,6 +20,7 @@ setup(
         'tinydav == 0.7.5+patchmultipleprops3'
     ],
     extras_require={'test': [
+        'gocept.httpserverlayer',
         'mock',
         'pytest',
     ]},

@@ -1,7 +1,9 @@
 import collections
-import zeit.migrate.migrate
+import gocept.httpserverlayer.static
 import mock
 import pytest
+import tinydav.exception
+import zeit.migrate.migrate
 
 
 Response = collections.namedtuple('Response', ['content'])
@@ -123,3 +125,19 @@ def test_main_calls_properties_for_each_uniqueId():
         list(zeit.migrate.migrate.main(
             ['http://xml.zeit.de/foobar', 'http://xml.zeit.de/foobaz']))
         assert 2 == prop.call_count
+
+
+@pytest.fixture(scope='session')
+def httpserver(request):
+    server = gocept.httpserverlayer.static.Layer()
+    server.setUp()
+    request.addfinalizer(server.tearDown)
+    return server
+
+
+def test_propfind_errors_include_the_url(httpserver):
+    client = zeit.migrate.migrate.WebDAVClient(
+        httpserver['http_host'], httpserver['http_port'])
+    with pytest.raises(tinydav.exception.HTTPError) as info:
+        client.propfind('/foo')
+    assert str(info.value).startswith('/foo')
