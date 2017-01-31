@@ -19,7 +19,10 @@ class WebDAVClient(tinydav.WebDAVClient):
     """
 
     def propfind(self, uri):
-        resp = super(WebDAVClient, self).propfind(uri)
+        try:
+            resp = super(WebDAVClient, self).propfind(uri)
+        except tinydav.exceptions.HTTPError, e:
+            e.response.statusline = u'%s %s' % (uri, e.response.statusline)
         if resp == 301:
             resp = super(WebDAVClient, self).propfind(uri + '/')
         return WebDAVPropfindResponse(resp)
