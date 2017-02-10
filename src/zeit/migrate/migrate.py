@@ -162,10 +162,16 @@ def main(uniqueIds):
     parser = argparse.ArgumentParser(description='Run DAV migrations')
     parser.add_argument('--dav-url', help='DAV URL',
                         default='http://cms-backend.staging.zeit.de:9000')
+    parser.add_argument('--verbose', help='Increase verbosity',
+                        action='store_true')
     options = parser.parse_args()
     if not options.dav_url:
         parser.print_help()
         raise SystemExit(1)
+
+    logging.basicConfig(
+        level=logging.DEBUG if options.verbose else logging.WARNING,
+        format='%(asctime)s %(levelname)-5.5s %(name)s %(message)s')
 
     migration_helper = PropertyMigrationHelper(url=options.dav_url)
     for uniqueId in uniqueIds:
