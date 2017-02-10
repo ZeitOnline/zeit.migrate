@@ -1,12 +1,16 @@
 import UserDict
 import argparse
 import contextlib
+import logging
 import lxml.etree
 import lxml.objectify
 import re
 import tinydav
 import tinydav.exception
 import urlparse
+
+
+log = logging.getLogger(__name__)
 
 NS_DOCUMENT = 'http://namespaces.zeit.de/CMS/document'
 
@@ -91,14 +95,16 @@ class PropertyMigrationHelper(object):
     @contextlib.contextmanager
     def properties(self, uniqueId):
         """Read properties, yield them for migration and write back to DAV."""
-        props = self.client.propfind(self._path(uniqueId)).properties
-        xml = lxml.etree.fromstring(
-            self.client.get(self._path(uniqueId)).content)
-        yield Properties(props, xml)
-        self.client.put(
-            self._path(uniqueId),
-            lxml.etree.tostring(xml, encoding='utf-8', xml_declaration=True))
-        self.client.proppatch(self._path(uniqueId), props)
+        try:
+            path = self._path(uniqueId)
+            props = self.client.propfind(path).properties
+            xml = lxml.etree.fromstring(self.client.get(path).content)
+            yield Properties(props, xml)
+            self.client.put(path, lxml.etree.tostring(
+                xml, encoding='utf-8', xml_declaration=True))
+            self.client.proppatch(path, props)
+        except:
+            log.error('Error %s', uniqueId, exc_info=True)
 
 
 class Properties(UserDict.DictMixin):
