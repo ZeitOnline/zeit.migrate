@@ -5,6 +5,7 @@ import logging
 import lxml.etree
 import lxml.objectify
 import re
+import sys
 import tinydav
 import tinydav.exception
 import urlparse
@@ -170,6 +171,7 @@ def main(uniqueIds):
         raise SystemExit(1)
 
     logging.basicConfig(
+        stream=sys.stdout,
         level=logging.DEBUG if options.verbose else logging.WARNING,
         format='%(asctime)s %(levelname)-5.5s %(name)s %(message)s')
 
