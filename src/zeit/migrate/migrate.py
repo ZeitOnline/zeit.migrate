@@ -96,6 +96,7 @@ class PropertyMigrationHelper(object):
     def properties(self, uniqueId):
         """Read properties, yield them for migration and write back to DAV."""
         try:
+            log.info('Processing %s', uniqueId)
             path = self._path(uniqueId)
             props = self.client.propfind(path).properties
             xml = lxml.etree.fromstring(self.client.get(path).content)
