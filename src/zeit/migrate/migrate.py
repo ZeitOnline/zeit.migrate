@@ -101,7 +101,12 @@ class PropertyMigrationHelper(object):
             path = self._path(uniqueId)
             props = self.client.propfind(path).properties
             xml = lxml.etree.fromstring(self.client.get(path).content)
+        except:
+            log.error('Error %s', uniqueId, exc_info=True)
+            yield None
+        else:
             yield Properties(props, xml)
+        try:
             self.client.put(path, lxml.etree.tostring(
                 xml, encoding='utf-8', xml_declaration=True))
             self.client.proppatch(path, props)
@@ -178,4 +183,5 @@ def main(uniqueIds):
     migration_helper = PropertyMigrationHelper(url=options.dav_url)
     for uniqueId in uniqueIds:
         with migration_helper.properties(uniqueId.strip()) as props:
-            yield props
+            if props is not None:
+                yield props
